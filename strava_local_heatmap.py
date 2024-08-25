@@ -68,9 +68,10 @@ def gaussian_filter(image: np.ndarray, sigma: float) -> np.ndarray:
 
 def main(args: Namespace) -> None:
     # read GPX trackpoints
-    gpx_files = glob.glob('{}/{}'.format(args.dir,
-                                         args.filter))
+    all_files = glob.glob(os.path.join(args.dir, '*.*'))
 
+    gpx_files = [file for file in all_files if file.lower().endswith(args.filter[1:].lower())]
+    
     if not gpx_files:
         exit('ERROR no data matching {}/{}'.format(args.dir,
                                                    args.filter))
@@ -94,8 +95,9 @@ def main(args: Namespace) -> None:
                             if '<trkpt' in line:
                                 l = line.split('"')
 
-                                lat_lon_data.append([float(l[1]),
-                                                     float(l[3])])
+                                if len(l) > 3: 
+                                    lat_lon_data.append([float(l[1]),
+                                                        float(l[3])])
 
                     else:
                         break
